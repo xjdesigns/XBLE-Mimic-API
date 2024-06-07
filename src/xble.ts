@@ -1,4 +1,3 @@
-import axios from 'axios'
 const BASE_URL = 'http://localhost:3000'
 const BASE_WS_URL = 'ws://localhost:3000'
 
@@ -127,7 +126,7 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
     },
 
     async readCharacteristicForDevice (deviceId, serviceUUID, characteristicUUID) {
-      const device = await axios.get(`${BASE_URL}/device?deviceId=${deviceId}`)
+      const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
       return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID)
     },
 
@@ -138,7 +137,7 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
       base64Value,
       transactionId
     ) {
-      const device = await axios.get(`${BASE_URL}/device?deviceId=${deviceId}`)
+      const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
       return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID)
     }
   }
@@ -165,7 +164,7 @@ const deviceConstructor = {
 
   // Take the device from the file and return back that dataset
   async discoverAllServicesAndCharacteristics () {
-    const device = await axios.get(`${BASE_URL}/device?deviceId=${this.id}`)
+    const device = await getAPI(`${BASE_URL}/device?deviceId=${this.id}`)
     return device?.data
   }
 }
@@ -177,6 +176,16 @@ function getDeviceCharacteristic (data, deviceId, serviceUUID, characteristicUUI
     )
   })
   return characteristic.length > 0 ? characteristic[0] : {}
+}
+
+function getAPI(path = '') {
+  return fetch(path)
+    .then((response) => response.json())
+    .then((data) => {
+      return {
+        data
+      }
+    })
 }
 
 // Per the docs this would be checking for Android on the permissions layer,

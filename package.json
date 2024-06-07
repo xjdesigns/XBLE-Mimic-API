@@ -1,7 +1,7 @@
 {
   "name": "xble_mimic_api",
   "description": "Javascript BLE mocking api for React Native",
-  "version": "0.2.3",
+  "version": "0.2.6",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",

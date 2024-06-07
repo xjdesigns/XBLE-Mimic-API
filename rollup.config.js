@@ -6,7 +6,7 @@ const config = [
     input: 'build/index.js',
     output: {
       file: 'lib/index.js',
-      format: 'cjs',
+      format: 'es',
       sourcemap: true,
     },
     external: ['axios'],
