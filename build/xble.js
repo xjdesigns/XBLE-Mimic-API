@@ -8,7 +8,12 @@ export function XBLEManager({ stateTimer = 5000 } = {}) {
         destroy() {
             return null;
         },
-        enable() {
+        async enable() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(this);
+                }, 4000);
+            });
         },
         state: 'PoweredOff',
         onStateChange(fn) {
@@ -46,11 +51,23 @@ export function XBLEManager({ stateTimer = 5000 } = {}) {
         stopDeviceScan() {
             this.deviceWS.send('ws:close');
         },
+        async servicesForDevice(deviceId, serviceUUID) {
+            const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`);
+            return getDeviceServices(device?.data, deviceId, serviceUUID);
+        },
+        async descriptorsForDevice(deviceId, serviceUUID, characteristicUUID) {
+            const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`);
+            return getDeviceDescriptors(device?.data, deviceId, serviceUUID, characteristicUUID);
+        },
         async readCharacteristicForDevice(deviceId, serviceUUID, characteristicUUID) {
             const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`);
             return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID);
         },
         async writeCharacteristicWithResponseForDevice(deviceId, serviceUUID, characteristicUUID, base64Value, transactionId) {
+            const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`);
+            return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID);
+        },
+        async writeCharacteristicWithoutResponseForDevice(deviceId, serviceUUID, characteristicUUID, base64Value, transactionId) {
             const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`);
             return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID);
         }
@@ -76,11 +93,21 @@ const deviceConstructor = {
         return device?.data;
     }
 };
+function getDeviceServices(data, deviceId, serviceUUID) {
+    const services = data.service.filter((dc) => {
+        return (dc.deviceID === deviceId && dc.serviceUUID === serviceUUID);
+    });
+    return services.length > 0 ? services : [];
+}
 function getDeviceCharacteristic(data, deviceId, serviceUUID, characteristicUUID) {
     const characteristic = data.characteristics.filter((dc) => {
         return (dc.deviceID === deviceId && dc.serviceUUID === serviceUUID && dc.uuid === characteristicUUID);
     });
     return characteristic.length > 0 ? characteristic[0] : {};
+}
+function getDeviceDescriptors(data, deviceId, serviceUUID, characteristicUUID) {
+    const characteristic = getDeviceCharacteristic(data, deviceId, serviceUUID, characteristicUUID);
+    return characteristic.length > 0 ? characteristic.descriptors : [];
 }
 function getAPI(path = '') {
     return fetch(path)

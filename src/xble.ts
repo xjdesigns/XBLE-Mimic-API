@@ -31,6 +31,46 @@ export type DEVICE_TYPE = {
 /**
  * @category TYPES
  */
+export type SERVICE_TYPE = {
+  id: string,
+  uuid: string,
+  deviceID: string,
+  isPrimary: boolean
+}
+
+/**
+ * @category TYPES
+ */
+export type DESCRIPTOR_TYPE = {
+  id: string,
+  uuid: string,
+  characteristicID: string,
+  characteristicUUID: string,
+  serviceID: string,
+  serviceUUID: string,
+  deviceID: string,
+  value: string,
+}
+
+/**
+ * @category TYPES
+ */
+export type CHARACTERISTIC_TYPE = {
+  id: string,
+  uuid: string,
+  serviceID: string,
+  serviceUUID: string,
+  deviceID: string,
+  isReadable: boolean,
+  isWritableWithResponse: boolean,
+  isWritableWithoutResponse: boolean,
+  value: string,
+  descriptors: DESCRIPTOR_TYPE[]
+}
+
+/**
+ * @category TYPES
+ */
 export type XBLE_MANAGER_TYPE = {
   stateTimer: number,
   stateWS: WebSocket,
@@ -41,11 +81,11 @@ export type XBLE_MANAGER_TYPE = {
   onStateChange: (fn: typeof Function) => STATE_CHANGE_TYPE,
   startDeviceScan: (_: null, __: null, fn: typeof Function) => void,
   stopDeviceScan: () => void,
-  servicesForDevice: (deviceId: string, serviceUUID: string) => Promise<any>,
-  descriptorsForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<any>,
-  readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<DEVICE_TYPE>,
-  writeCharacteristicWithResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<any>,
-  writeCharacteristicWithoutResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<DEVICE_TYPE>
+  servicesForDevice: (deviceId: string, serviceUUID: string) => Promise<SERVICE_TYPE[]>,
+  descriptorsForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<DESCRIPTOR_TYPE[]>,
+  readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<CHARACTERISTIC_TYPE>,
+  writeCharacteristicWithResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<CHARACTERISTIC_TYPE>,
+  writeCharacteristicWithoutResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<CHARACTERISTIC_TYPE>
 }
 
 /**
