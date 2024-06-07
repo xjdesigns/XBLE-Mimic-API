@@ -23,13 +23,14 @@ export type XBLE_MANAGER_TYPE = {
   stateWS: WebSocket,
   deviceWS: WebSocket,
   destroy: () => null,
-  enable: () => void,
-  state: 'PoweredOn' | 'PoweredOff';
+  enable: () => Promise<XBLE_MANAGER_TYPE>,
+  state: 'PoweredOn' | 'PoweredOff' | 'Unauthorized' | 'Resetting' | 'Unknown';
   onStateChange: (fn: typeof Function) => STATE_CHANGE_TYPE,
   startDeviceScan: (_: null, __: null, fn: typeof Function) => void,
   stopDeviceScan: () => void,
   readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<any>,
-  writeCharacteristicWithResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<any>
+  writeCharacteristicWithResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<any>,
+  writeCharacteristicWithoutResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<any>
 }
 
 /**
@@ -65,11 +66,16 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
       return null
     },
 
-    enable () {
+    async enable () {
       // This could be interesting, its a promise that only succeeds when state changes
       // Blocks for Android with PoweredOn state
       // I could just set the device state with an API call which updates the file
       // or else make a hook on itself to allow the user to flip it with Simulator???
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(this)
+        }, 4000)
+      })
     },
 
     // State will come from saved file from App through API call to endpoint
@@ -131,6 +137,17 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
     },
 
     async writeCharacteristicWithResponseForDevice (
+      deviceId,
+      serviceUUID,
+      characteristicUUID,
+      base64Value,
+      transactionId
+    ) {
+      const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
+      return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID)
+    },
+
+    async writeCharacteristicWithoutResponseForDevice (
       deviceId,
       serviceUUID,
       characteristicUUID,

@@ -15,6 +15,11 @@ Built of the spec for "react-native-ble-plx" plugin.
 
 [react-native-ble-plx docs](https://dotintent.github.io/react-native-ble-plx/#introduction)
 
+## Dependency
+This module currently is meant to be used along with the XBLE Mimic APP. The app allows you to set up data, create devices, and exposes the http/websocket endpoints on localhost:3000.
+
+[XBLE Mimic App](https://github.com/xjdesigns/XBLE-Mimic-APP)
+
 ## Install
 ```bash
 npm i xble_mimic_api
