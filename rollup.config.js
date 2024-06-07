@@ -27,5 +27,6 @@ export default {
     }),
     commonjs(),
     isProduction ? uglify() : null
-  ]
+  ],
+  external: ['axios']
 };

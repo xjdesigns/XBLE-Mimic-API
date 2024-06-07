@@ -5,7 +5,7 @@ Javascript BLE mocking api for React Native written in typescript.
 This is a WIP. Building out to my internal needs but the goal is to extend to match the actual module 1:1.
 
 # Documentation Site
-[Documentation Site](https://xjdesigns.github.io/HelpingHand/)
+[Documentation Site](https://xjdesigns.github.io/XBLE-Mimic-API/)
 
 ## BLE Manager
 
