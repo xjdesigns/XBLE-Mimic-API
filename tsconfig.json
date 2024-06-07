@@ -1,9 +1,10 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+      "moduleResolution": "node",
       "target": "es2020",
-      "module": "commonjs",
-      "outDir": "lib",
+      "module": "esnext",
+      "outDir": "build",
       "strict": true,
       "noImplicitAny": false,
       "removeComments": true,
