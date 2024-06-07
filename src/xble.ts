@@ -18,6 +18,19 @@ export type STATE_CHANGE_TYPE = {
 /**
  * @category TYPES
  */
+export type DEVICE_TYPE = {
+  name: string,
+  id: string,
+  localName: string,
+  isConnectable: boolean,
+  _haveDeviceFail: boolean,
+  connect: () => Promise<DEVICE_TYPE>,
+  discoverAllServicesAndCharacteristics: () => Promise<DEVICE_TYPE>
+}
+
+/**
+ * @category TYPES
+ */
 export type XBLE_MANAGER_TYPE = {
   stateTimer: number,
   stateWS: WebSocket,
@@ -28,22 +41,11 @@ export type XBLE_MANAGER_TYPE = {
   onStateChange: (fn: typeof Function) => STATE_CHANGE_TYPE,
   startDeviceScan: (_: null, __: null, fn: typeof Function) => void,
   stopDeviceScan: () => void,
-  readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<any>,
+  servicesForDevice: (deviceId: string, serviceUUID: string) => Promise<any>,
+  descriptorsForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<any>,
+  readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<DEVICE_TYPE>,
   writeCharacteristicWithResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<any>,
-  writeCharacteristicWithoutResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<any>
-}
-
-/**
- * @category TYPES
- */
-export type DEVICE_TYPE = {
-  name: string,
-  id: string,
-  localName: string,
-  isConnectable: boolean,
-  _haveDeviceFail: boolean,
-  connect: () => Promise<DEVICE_TYPE>,
-  discoverAllServicesAndCharacteristics: () => Promise<DEVICE_TYPE>
+  writeCharacteristicWithoutResponseForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string, base64Value?: string, transactionId?: string) => Promise<DEVICE_TYPE>
 }
 
 /**
@@ -131,6 +133,16 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
       this.deviceWS.send('ws:close')
     },
 
+    async servicesForDevice (deviceId, serviceUUID) {
+      const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
+      return getDeviceServices(device?.data, deviceId, serviceUUID)
+    },
+
+    async  descriptorsForDevice (deviceId, serviceUUID, characteristicUUID) {
+      const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
+      return getDeviceDescriptors(device?.data, deviceId, serviceUUID, characteristicUUID)
+    },
+
     async readCharacteristicForDevice (deviceId, serviceUUID, characteristicUUID) {
       const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
       return getDeviceCharacteristic(device?.data, deviceId, serviceUUID, characteristicUUID)
@@ -186,6 +198,15 @@ const deviceConstructor = {
   }
 }
 
+function getDeviceServices (data, deviceId, serviceUUID) {
+  const services = data.service.filter((dc) => {
+    return (
+      dc.deviceID === deviceId && dc.serviceUUID === serviceUUID
+    )
+  })
+  return services.length > 0 ? services : []
+}
+
 function getDeviceCharacteristic (data, deviceId, serviceUUID, characteristicUUID) {
   const characteristic = data.characteristics.filter((dc) => {
     return (
@@ -195,7 +216,12 @@ function getDeviceCharacteristic (data, deviceId, serviceUUID, characteristicUUI
   return characteristic.length > 0 ? characteristic[0] : {}
 }
 
-function getAPI(path = '') {
+function getDeviceDescriptors (data, deviceId, serviceUUID, characteristicUUID) {
+  const characteristic = getDeviceCharacteristic(data, deviceId, serviceUUID, characteristicUUID)
+  return characteristic.length > 0 ? characteristic.descriptors : []
+}
+
+function getAPI (path = '') {
   return fetch(path)
     .then((response) => response.json())
     .then((data) => {

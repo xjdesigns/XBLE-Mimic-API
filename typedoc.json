@@ -3,5 +3,6 @@
     "includeCategories": true
   },
   "name": "XBLE Mimic Version",
-  "includeVersion": true
+  "includeVersion": true,
+  "sort": ["source-order"]
 }
