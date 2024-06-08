@@ -178,7 +178,7 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
       return getDeviceServices(device?.data, deviceId, serviceUUID)
     },
 
-    async  descriptorsForDevice (deviceId, serviceUUID, characteristicUUID) {
+    async descriptorsForDevice (deviceId, serviceUUID, characteristicUUID) {
       const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
       return getDeviceDescriptors(device?.data, deviceId, serviceUUID, characteristicUUID)
     },
@@ -239,9 +239,9 @@ const deviceConstructor = {
 }
 
 function getDeviceServices (data, deviceId, serviceUUID) {
-  const services = data.service.filter((dc) => {
+  const services = data.service.filter((ds) => {
     return (
-      dc.deviceID === deviceId && dc.serviceUUID === serviceUUID
+      ds.deviceID === deviceId && ds.uuid === serviceUUID
     )
   })
   return services.length > 0 ? services : []
@@ -258,7 +258,7 @@ function getDeviceCharacteristic (data, deviceId, serviceUUID, characteristicUUI
 
 function getDeviceDescriptors (data, deviceId, serviceUUID, characteristicUUID) {
   const characteristic = getDeviceCharacteristic(data, deviceId, serviceUUID, characteristicUUID)
-  return characteristic.length > 0 ? characteristic.descriptors : []
+  return characteristic.descriptors ?? []
 }
 
 function getAPI (path = '') {

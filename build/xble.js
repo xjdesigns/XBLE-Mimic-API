@@ -94,8 +94,8 @@ const deviceConstructor = {
     }
 };
 function getDeviceServices(data, deviceId, serviceUUID) {
-    const services = data.service.filter((dc) => {
-        return (dc.deviceID === deviceId && dc.serviceUUID === serviceUUID);
+    const services = data.service.filter((ds) => {
+        return (ds.deviceID === deviceId && ds.uuid === serviceUUID);
     });
     return services.length > 0 ? services : [];
 }
