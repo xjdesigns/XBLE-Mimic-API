@@ -107,7 +107,7 @@ function getDeviceCharacteristic(data, deviceId, serviceUUID, characteristicUUID
 }
 function getDeviceDescriptors(data, deviceId, serviceUUID, characteristicUUID) {
     const characteristic = getDeviceCharacteristic(data, deviceId, serviceUUID, characteristicUUID);
-    return characteristic.length > 0 ? characteristic.descriptors : [];
+    return characteristic.descriptors ?? [];
 }
 function getAPI(path = '') {
     return fetch(path)
