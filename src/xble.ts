@@ -81,6 +81,7 @@ export type XBLE_MANAGER_TYPE = {
   onStateChange: (fn: typeof Function) => STATE_CHANGE_TYPE,
   startDeviceScan: (_: null, __: null, fn: typeof Function) => void,
   stopDeviceScan: () => void,
+  isDeviceConnected: (deviceId: string) => Promise<boolean>,
   servicesForDevice: (deviceId: string, serviceUUID: string) => Promise<SERVICE_TYPE[]>,
   descriptorsForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<DESCRIPTOR_TYPE[]>,
   readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<CHARACTERISTIC_TYPE>,
@@ -171,6 +172,11 @@ export function XBLEManager ({ stateTimer = 5000 }: INIT_TYPE = {}): XBLE_MANAGE
 
     stopDeviceScan () {
       this.deviceWS.send('ws:close')
+    },
+
+    async isDeviceConnected (deviceId) {
+      const device = await getAPI(`${BASE_URL}/device?deviceId=${deviceId}`)
+      return device?.data?.device?.isConnected ?? false
     },
 
     async servicesForDevice (deviceId, serviceUUID) {

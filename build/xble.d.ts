@@ -51,6 +51,7 @@ export type XBLE_MANAGER_TYPE = {
     onStateChange: (fn: typeof Function) => STATE_CHANGE_TYPE;
     startDeviceScan: (_: null, __: null, fn: typeof Function) => void;
     stopDeviceScan: () => void;
+    isDeviceConnected: (deviceId: string) => Promise<boolean>;
     servicesForDevice: (deviceId: string, serviceUUID: string) => Promise<SERVICE_TYPE[]>;
     descriptorsForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<DESCRIPTOR_TYPE[]>;
     readCharacteristicForDevice: (deviceId: string, serviceUUID: string, characteristicUUID: string) => Promise<CHARACTERISTIC_TYPE>;

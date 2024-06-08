@@ -1,7 +1,7 @@
 {
   "name": "xble_mimic_api",
   "description": "Javascript BLE mocking api for React Native",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
@@ -24,6 +24,7 @@
     "test:coveralls": "npm run test:coverage -- --coverageReporters=text-lcov | coveralls",
     "type-check": "tsc --noEmit",
     "prepublish": "npm run build",
+    "release": "standard-version",
     "typedoc": "typedoc src/index.ts"
   },
   "devDependencies": {
@@ -45,5 +46,8 @@
   },
   "peerDependencies": {
     "axios": "^1.7.2"
+  },
+  "dependencies": {
+    "standard-version": "^9.5.0"
   }
 }
